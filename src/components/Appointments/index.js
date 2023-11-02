@@ -25,9 +25,8 @@ class Appointments extends Component {
   onAddAppointment = () => {
     const {titleInput, dateInput} = this.state
 
-    const formattedDate = format(new Date(dateInput), 'dd MMMM yyyy, EEEE')
-
     if (titleInput !== '' && dateInput !== '') {
+      const formattedDate = format(new Date(dateInput), 'dd MMMM yyyy, EEEE')
       this.setState(prevState => ({
         appointmentsList: [
           ...prevState.appointmentsList,
@@ -65,9 +64,14 @@ class Appointments extends Component {
   }
 
   render() {
-    const {titleInput, dateInput, appointmentsList} = this.state
+    const {
+      titleInput,
+      dateInput,
+      appointmentsList,
+      dispOnlyStarred,
+    } = this.state
     const filteredAppointmentsList = appointmentsList.filter(item =>
-      item.title.toLowerCase().includes(titleInput.toLowerCase()),
+      dispOnlyStarred ? item.isStarred === dispOnlyStarred : true,
     )
 
     return (
@@ -82,7 +86,7 @@ class Appointments extends Component {
                 type="text"
                 onChange={this.onTitleEntry}
                 value={titleInput}
-                label="Title"
+                id="Title"
               />
               <label htmlFor="Date">Date</label>
               <input
@@ -90,7 +94,7 @@ class Appointments extends Component {
                 type="date"
                 onChange={this.onDateEntry}
                 value={dateInput}
-                label="Date"
+                id="Date"
               />
               <button
                 className="add-button"
@@ -120,7 +124,11 @@ class Appointments extends Component {
             </div>
             <ul>
               {filteredAppointmentsList.map(item => (
-                <AppointmentItem key={item.id} itemData={item} />
+                <AppointmentItem
+                  key={item.id}
+                  itemData={item}
+                  onTogglingStar={this.onTogglingStar}
+                />
               ))}
             </ul>
           </div>
